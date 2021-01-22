@@ -2,7 +2,13 @@
 title: "R-Ladies Tunis"
 author: "DL"
 date: '2021-01-22'
-output: html_document
+output: 
+  html_document:
+    toc: yes
+    toc_float:
+      collapse: no
+    fig_caption: yes
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
@@ -50,6 +56,11 @@ samples <- read_tsv(
 
 # Results
 
+## Sequencing depth
+
+Say something about the sequencing depth
+(`r figr('seqdepth-plot', T, type = 'Figure')`).
+
 ```{r seqdepth-plot, fig.height=6, fig.width=10, fig.cap = '**Sequencing depth per sample.**'}
 counts %>%
   group_by(sample) %>%
@@ -59,6 +70,8 @@ counts %>%
   scale_y_log10() +
   coord_flip()
 ```
+
+## Phylum profiles
 
 We found mostly Cyanobacteria in the samples
 (`r figr('phylum-plot', T, type = 'Figure')`).
@@ -83,6 +96,8 @@ nmds <- counts %>%
   data.frame() %>% column_to_rownames('sample') %>%
   vegan::metaMDS(k = 3)
 ```
+
+## NMDS
 
 ```{r nmds-plot, fig.width = 10, fig.height=6, fig.cap = '**NMDS plot.**'}
 data.frame(nmds$points) %>%

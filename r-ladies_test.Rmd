@@ -2,7 +2,7 @@
 title: "R-Ladies test"
 author: "DL"
 date: '2021-01-21'
-output: html_document
+output: 
   html_document:
     toc: yes
     toc_float:
