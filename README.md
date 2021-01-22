@@ -4,8 +4,12 @@ Small repo with material from my lecture for R-ladies in Tunis January 2021.
 
 The aim of my seminar will be to show how I use the ["Tidyverse"](https://www.tidyverse.org/)
 in my work in microbial ecology.
+Make sure you checkout the free online book, [R for Data Science](https://r4ds.had.co.nz/), written
+by Hadley Wickham, the creator of the Tidyverse, together with Garrett Grolemund.
 I will use 16S amplicon data, generated to analyze community composition in the surface water
 at our sampling station [Linnaeus Microbial Observatory, LMO](https://lnu.se/en/research/searchresearch/linnaeus-microbial-observatory-lmo/).
+If you're not a biologist, the data is just three tables, and you will surely be able to follow along,
+and hopefully learn something, anyway.
 
 ## Clone the repository
 
