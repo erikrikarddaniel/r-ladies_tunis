@@ -47,4 +47,11 @@ In the root directory are the RMarkdowns created before and during the seminar.
 
 ## Required R packages
 
-I will use the `tidyverse` meta-package and the `vegan` package for ecology.
+I will use the `tidyverse` meta-package and the `vegan` package, a commonly used analysis package for ecology.
+To install the packages, just:
+
+```R
+install.packages(c('tidyverse', 'vegan'))
+```
+
+As mentioned, `tidyverse` is a meta-package that is depending on a number of packages that can be installed in one go.
