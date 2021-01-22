@@ -21,6 +21,14 @@ for installation instructions) to clone it:
 git clone https://github.com/erikrikarddaniel/r-ladies_tunis.git
 ```
 
+After you have cloned the repo, you can get the latest changes with:
+
+```bash
+git pull
+```
+
+There's also a graphical Git client built into RStudio from where you can do these things.
+
 ## Description of the repository
 
 In the `data` directory there are three tables that we will use:
