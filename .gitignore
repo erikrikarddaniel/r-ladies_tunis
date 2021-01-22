@@ -31,3 +31,4 @@ _cache
 work
 .nextflow*
 results
+*_cache
