@@ -3,10 +3,16 @@ title: "R-Ladies test"
 author: "DL"
 date: '2021-01-21'
 output: html_document
+  html_document:
+    toc: yes
+    toc_float:
+      collapse: no
+    fig_caption: yes
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.path = 'figures/', cache = TRUE)
 ```
 
 ```{r libraries, include = FALSE}
