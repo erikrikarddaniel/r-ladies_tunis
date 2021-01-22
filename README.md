@@ -1,6 +1,11 @@
 # r-ladies_tunis
 
-Small repo with material from my lecture for R-ladies in Tunis January 2021
+Small repo with material from my lecture for R-ladies in Tunis January 2021.
+
+The aim of my seminar will be to show how I use the ["Tidyverse"](https://www.tidyverse.org/)
+in my work in microbial ecology.
+I will use 16S amplicon data, generated to analyze community composition in the surface water
+at our sampling station [Linnaeus Microbial Observatory, LMO](https://lnu.se/en/research/searchresearch/linnaeus-microbial-observatory-lmo/).
 
 ## Clone the repository
 
@@ -23,6 +28,7 @@ In the `data` directory there are three tables that we will use:
   and assign taxonomy using [QIIME2's](https://docs.qiime2.org) Bayesian classifier.
   The tables are `ampliseq_results/abundance_table/unfiltered/feature-table.tsv` and
   `ampliseq_results/taxonomy/taxonomy.tsv` for the ASV table and taxonomy tables respectively.
+  The ASV table is subsampled and hence only suitable for this demonstration of the `tidyverse`.
   
 * `data/reads/`: Test read files for my Ampliseq demo.
   The classifier I used is available here: https://github.com/nf-core/test-datasets/raw/ampliseq/testdata/GTGYCAGCMGCCGCGGTAA-GGACTACNVGGGTWTCTAAT-gg_13_8-85-qiime2_2019.7-classifier.qza
@@ -38,3 +44,7 @@ nextflow run nf-core/ampliseq -r dev -profile docker \
 ```
   
 In the root directory are the RMarkdowns created before and during the seminar.
+
+## Required R packages
+
+I will use the `tidyverse` meta-package and the `vegan` package for ecology.
