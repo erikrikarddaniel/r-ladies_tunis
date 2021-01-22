@@ -33,7 +33,8 @@ In the `data` directory there are three tables that we will use:
 * `data/reads/`: Test read files for my Ampliseq demo.
   The classifier I used is available here: https://github.com/nf-core/test-datasets/raw/ampliseq/testdata/GTGYCAGCMGCCGCGGTAA-GGACTACNVGGGTWTCTAAT-gg_13_8-85-qiime2_2019.7-classifier.qza
   (You can use the URL when running the workflow; no need to download the file.)
-  I ran this command:
+  
+  I ran this command to demonstrate the workflow:
   
 ```
 nextflow run nf-core/ampliseq -r dev -profile docker \
@@ -43,7 +44,7 @@ nextflow run nf-core/ampliseq -r dev -profile docker \
   --max_cpus 2
 ```
   
-In the root directory are the RMarkdowns created before and during the seminar.
+* In the root directory are the RMarkdowns created before and during the seminar.
 
 ## Required R packages
 
