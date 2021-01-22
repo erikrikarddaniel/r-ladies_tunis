@@ -1,0 +1,106 @@
+---
+title: "R-Ladies Tunis"
+author: "DL"
+date: '2021-01-22'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r read-libraries, include = FALSE}
+library(tidyverse)
+library(kfigr)
+```
+
+```{r read-tables}
+counts <- read_tsv(
+  'data/ampliseq_results/abundance_table/unfiltered/feature-table.tsv',
+  skip = 1,
+  col_types = cols(.default = col_double(), `#OTU ID` = col_character())
+) %>%
+  pivot_longer(2:ncol(.), names_to = 'sample', values_to = 'count') %>%
+  group_by(sample) %>%
+  mutate(relab = count/sum(count)) %>%
+  ungroup() %>%
+  rename(asv = `#OTU ID`)
+
+taxonomy <- read_tsv(
+  'data/ampliseq_results/taxonomy/taxonomy.tsv',
+  col_types = 'ccd'
+) %>%
+  rename(asv = `Feature ID`) %>%
+  mutate(Taxon = str_remove_all(Taxon, 'D_[0-9]__')) %>%
+  separate(
+    Taxon, 
+    c('domain', 'phylum', 'class', 'order', 'genus', 'species'), 
+    sep = ';', extra = 'merge', fill = 'right'
+  )
+
+samples <- read_tsv(
+  'data/samples.tsv',
+  col_types = cols()
+)
+```
+
+# Introduction
+
+# Materials & Methods
+
+# Results
+
+```{r seqdepth-plot, fig.height=6, fig.width=10, fig.cap = '**Sequencing depth per sample.**'}
+counts %>%
+  group_by(sample) %>%
+  summarise(count = sum(count), .groups = 'drop') %>%
+  ggplot(aes(x = sample, y = count)) +
+  geom_point() +
+  scale_y_log10() +
+  coord_flip()
+```
+
+We found mostly Cyanobacteria in the samples
+(`r figr('phylum-plot', T, type = 'Figure')`).
+
+```{r phylum-plot, fig.height=8, fig.width=10, fig.cap='**Phylum distribution.**'}
+counts %>%
+  inner_join(taxonomy, by = 'asv') %>%
+  group_by(sample, phylum) %>%
+  summarise(relab = sum(relab), .groups = 'drop') %>%
+  inner_join(samples, by = 'sample') %>%
+  ggplot(aes(x = date, y = relab, fill = phylum)) +
+  geom_col() +
+  scale_fill_brewer(palette = 'Paired') +
+  scale_x_date(breaks = 'month') +
+  coord_flip()
+```
+
+```{r nmds, include = FALSE}
+nmds <- counts %>%
+  select(-count) %>%
+  pivot_wider(names_from = asv, values_from = relab, values_fill = 0) %>%
+  data.frame() %>% column_to_rownames('sample') %>%
+  vegan::metaMDS(k = 3)
+```
+
+```{r nmds-plot, fig.width = 10, fig.height=6, fig.cap = '**NMDS plot.**'}
+data.frame(nmds$points) %>%
+  rownames_to_column('sample') %>%
+  inner_join(samples, by = 'sample') %>%
+  mutate(
+    year = lubridate::year(date) %>% as.character(),  
+    month = lubridate::month(date, label = TRUE) %>% as.character()
+  ) %>%
+  ggplot(
+    aes(MDS1, MDS2,  shape = year, colour = month )
+  ) +
+  geom_point() +
+  scale_colour_brewer('Month', palette = 'Paired') +
+  scale_shape_discrete('Year') +
+  facet_wrap(~year)
+```
+
+
+# Discussion
+
