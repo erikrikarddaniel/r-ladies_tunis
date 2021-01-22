@@ -21,29 +21,36 @@ library(kfigr)
 ```
 
 ```{r read-tables}
+# Read the file containing counts of ASVs from Ampliseq
 counts <- read_tsv(
   'data/ampliseq_results/abundance_table/unfiltered/feature-table.tsv',
   skip = 1,
   col_types = cols(.default = col_double(), `#OTU ID` = col_character())
 ) %>%
+  # Make it "long", i.e. move sample information from column names to a column
   pivot_longer(2:ncol(.), names_to = 'sample', values_to = 'count') %>%
-  group_by(sample) %>%
-  mutate(relab = count/sum(count)) %>%
-  ungroup() %>%
+  # Calculate relative abundances, i.e. counts divided by the sum of count for each sample
+  group_by(sample) %>% mutate(relab = count/sum(count)) %>% ungroup() %>%
+  # Rename the ASV code column
   rename(asv = `#OTU ID`)
 
+# Read the taxonomy file from Ampliseq
 taxonomy <- read_tsv(
   'data/ampliseq_results/taxonomy/taxonomy.tsv',
   col_types = 'ccd'
 ) %>%
+  # Rename the ASV code column
   rename(asv = `Feature ID`) %>%
+  # Strip the taxon names of the leading "D_0__" etc.
   mutate(Taxon = str_remove_all(Taxon, 'D_[0-9]__')) %>%
+  # Split the taxonomy string into individual pieces (I forgot family here during the seminar)
   separate(
     Taxon, 
-    c('domain', 'phylum', 'class', 'order', 'genus', 'species'), 
+    c('domain', 'phylum', 'class', 'order', 'family', 'genus', 'species'), 
     sep = ';', extra = 'merge', fill = 'right'
   )
 
+# Read the sample file
 samples <- read_tsv(
   'data/samples.tsv',
   col_types = cols()
@@ -63,11 +70,15 @@ Say something about the sequencing depth
 
 ```{r seqdepth-plot, fig.height=6, fig.width=10, fig.cap = '**Sequencing depth per sample.**'}
 counts %>%
-  group_by(sample) %>%
-  summarise(count = sum(count), .groups = 'drop') %>%
+  # Calculate the sum of counts for each sample
+  group_by(sample) %>% summarise(count = sum(count), .groups = 'drop') %>%
+  # Send to ggplot for plotting
   ggplot(aes(x = sample, y = count)) +
+  # Dotplot
   geom_point() +
+  # Logarithmic y-axis
   scale_y_log10() +
+  # Turn the plot 90 degrees
   coord_flip()
 ```
 
@@ -78,41 +89,63 @@ We found mostly Cyanobacteria in the samples
 
 ```{r phylum-plot, fig.height=8, fig.width=10, fig.cap='**Phylum distribution.**'}
 counts %>%
+  # Join in the taxonomy with the counts
   inner_join(taxonomy, by = 'asv') %>%
-  group_by(sample, phylum) %>%
-  summarise(relab = sum(relab), .groups = 'drop') %>%
+  # Summarize relative abundances per sample and phylum
+  group_by(sample, phylum) %>% summarise(relab = sum(relab), .groups = 'drop') %>%
+  # Join in sample information
   inner_join(samples, by = 'sample') %>%
+  # Send to ggplot
   ggplot(aes(x = date, y = relab, fill = phylum)) +
+  # Barchart
   geom_col() +
+  # Nicer colours
   scale_fill_brewer(palette = 'Paired') +
+  # One label per month
   scale_x_date(breaks = 'month') +
+  # Turn the plot 90 degrees
   coord_flip()
 ```
 
 ```{r nmds, include = FALSE}
+# Create an nmds object by calling vegan's metaMDS function. This wants a matrix with samples as
+# rows and asv relative abundances as columns.
 nmds <- counts %>%
+  # Get rid of the count column that will create problems
   select(-count) %>%
+  # Turn the table wide, with asvs as columns; fill with 0s
   pivot_wider(names_from = asv, values_from = relab, values_fill = 0) %>%
+  # Transform the sample column to rownames to make the matrix truly numerical
   data.frame() %>% column_to_rownames('sample') %>%
+  # Call the vegan function; three axes
   vegan::metaMDS(k = 3)
 ```
 
 ## NMDS
 
 ```{r nmds-plot, fig.width = 10, fig.height=6, fig.cap = '**NMDS plot.**'}
+# Extract the points matrix, which will make up our plot coordinates.
 data.frame(nmds$points) %>%
+  # Get back the sample name from the rownames
   rownames_to_column('sample') %>%
+  # Join in sample information
   inner_join(samples, by = 'sample') %>%
+  # Calculate year and month columns using lubridate functions
   mutate(
     year = lubridate::year(date) %>% as.character(),  
     month = lubridate::month(date, label = TRUE) %>% as.character()
   ) %>%
+  # Send to ggplot
   ggplot(
     aes(MDS1, MDS2,  shape = year, colour = month )
   ) +
+  # Dotplot
   geom_point() +
+  # Better title and nicer colours for the months
   scale_colour_brewer('Month', palette = 'Paired') +
+  # Better title for the year legend
   scale_shape_discrete('Year') +
+  # facet_wrap() or facet_grid() are optional ways of dividing up the plot
   facet_wrap(~year)
 ```
 
