@@ -30,7 +30,11 @@ In the `data` directory there are three tables that we will use:
   I ran this command:
   
 ```
-nextflow run nf-core/ampliseq -r dev -profile docker --manifest data/MANIFEST --classifier https://github.com/nf-core/test-datasets/raw/ampliseq/testdata/GTGYCAGCMGCCGCGGTAA-GGACTACNVGGGTWTCTAAT-gg_13_8-85-qiime2_2019.7-classifier.qza --FW_primer GTGYCAGCMGCCGCGGTAA --RV_primer GGACTACNVGGGTWTCTAAT --max_cpus 2
+nextflow run nf-core/ampliseq -r dev -profile docker \
+  --manifest data/MANIFEST \
+  --classifier https://github.com/nf-core/test-datasets/raw/ampliseq/testdata/GTGYCAGCMGCCGCGGTAA-GGACTACNVGGGTWTCTAAT-gg_13_8-85-qiime2_2019.7-classifier.qza \
+  --FW_primer GTGYCAGCMGCCGCGGTAA --RV_primer GGACTACNVGGGTWTCTAAT \
+  --max_cpus 2
 ```
   
 In the root directory are the RMarkdowns created before and during the seminar.
