@@ -28,3 +28,6 @@ silva.mothur.nr.*
 _cache
 .*.sw?
 *.html
+work
+.nextflow*
+results
